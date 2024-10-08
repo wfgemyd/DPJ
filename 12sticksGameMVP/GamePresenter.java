@@ -1,33 +1,43 @@
 public class GamePresenter {
     private GameModel model;
     private GameView view;
-    private String currentPlayer;
+    private Player currentPlayer;
+    private Player player1;
+    private Player player2;
 
     public GamePresenter(GameModel model, GameView view) {
         this.model = model;
         this.view = view;
         this.view.setPresenter(this);
-        this.currentPlayer = "Player 1";
+        this.player1 = new HumanPlayer("Player 1", view);
+        this.player2 = new HumanPlayer("Player 2", view);
+        this.currentPlayer = player1;
     }
 
     public void startGame() {
         while (!model.isGameOver()) {
             view.displaySticks(model.getSticksRemaining());
-            view.promptPlayer(currentPlayer);
+            boolean validMove = false;
 
-            int sticksToRemove = view.getPlayerInput();
-            try {
-                model.removeSticks(sticksToRemove);
+            while (!validMove) {
+                int sticksToRemove = currentPlayer.takeSticks(model.getSticksRemaining());
+                try {
+                    model.removeSticks(sticksToRemove);
+                    validMove = true;
+                } catch (IllegalArgumentException e) {
+                    view.displayInvalidMove(e.getMessage());
+                }
+            }
+
+            if (model.isGameOver()) {
+                view.displayLoser(currentPlayer.getName());
+            } else {
                 switchPlayer();
-            } catch (IllegalArgumentException e) {
-                view.displayInvalidMove(e.getMessage());
             }
         }
-        switchPlayer(); // Switch back to the player who didn't make the last move
-        view.displayWinner(currentPlayer);
     }
 
     private void switchPlayer() {
-        currentPlayer = currentPlayer.equals("Player 1") ? "Player 2" : "Player 1";
+        currentPlayer = (currentPlayer == player1) ? player2 : player1;
     }
 }

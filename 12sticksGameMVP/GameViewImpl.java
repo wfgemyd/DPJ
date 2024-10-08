@@ -28,8 +28,8 @@ public class GameViewImpl implements GameView {
     }
 
     @Override
-    public void displayWinner(String winner) {
-        System.out.println("\nGame Over! " + winner + " wins!");
+    public void displayLoser(String loser) {
+        System.out.println("\nGame Over! " + loser + " loses!");
     }
 
     @Override
