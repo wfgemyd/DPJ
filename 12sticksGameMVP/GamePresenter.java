@@ -5,12 +5,12 @@ public class GamePresenter {
     private Player player1;
     private Player player2;
 
-    public GamePresenter(GameModel model, GameView view) {
+    public GamePresenter(GameModel model, GameView view, Player player1, Player player2) {
         this.model = model;
         this.view = view;
         this.view.setPresenter(this);
-        this.player1 = new HumanPlayer("Player 1", view);
-        this.player2 = new HumanPlayer("Player 2", view);
+        this.player1 = player1;
+        this.player2 = player2;
         this.currentPlayer = player1;
     }
 
@@ -26,6 +26,10 @@ public class GamePresenter {
                     validMove = true;
                 } catch (IllegalArgumentException e) {
                     view.displayInvalidMove(e.getMessage());
+                    if (currentPlayer instanceof ComputerPlayer) {
+                        // If the computer made an invalid move, adjust and retry
+                        continue;
+                    }
                 }
             }
 
